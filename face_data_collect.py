@@ -12,7 +12,7 @@ import cv2
 import numpy as np
 
 #Init Camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(-1)
 
 # Face Detection
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
@@ -45,23 +45,32 @@ while True:
 		offset = 10
 		face_section = frame[y-offset:y+h+offset,x-offset:x+w+offset]
 		face_section = cv2.resize(face_section,(100,100))
+		key_pressed = cv2.waitKey(1) & 0xFF
+		if key_pressed == ord('q'):
+			break
 
 		skip += 1
 		if skip%10==0:
 			face_data.append(face_section)
 			print(len(face_data))
+			face_data_np = np.asarray(face_data)
+			face_data_np = face_data_np.reshape((face_data_np.shape[0],-1))
+			print(face_data_np.shape)
+			np.save(dataset_path+file_name+'.npy',face_data_np)
+
 
 
 	cv2.imshow("Frame",frame)
 	cv2.imshow("Face Section",face_section)
 
 	key_pressed = cv2.waitKey(1) & 0xFF
+
 	if key_pressed == ord('q'):
 		break
 
 # Convert our face list array into a numpy array
-face_data = np.asarray(face_data)
-face_data = face_data.reshape((face_data.shape[0],-1))
+face_data_np = np.asarray(face_data)
+face_data_np = face_data.reshape((face_data_np.shape[0],-1))
 print(face_data.shape)
 
 # Save this data into file system

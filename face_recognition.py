@@ -43,7 +43,7 @@ def knn(train, test, k=5):
 
 
 #Init Camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(-1)
 
 # Face Detection
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
@@ -80,10 +80,12 @@ print(face_labels.shape)
 
 trainset = np.concatenate((face_dataset,face_labels),axis=1)
 print(trainset.shape)
+print(trainset)
 
 # Testing 
 
 while True:
+	cv2.ocl.setUseOpenCL(False)
 	ret,frame = cap.read()
 	if ret == False:
 		continue
@@ -102,6 +104,7 @@ while True:
 
 		#Predicted Label (out)
 		out = knn(trainset,face_section.flatten())
+		print(out)
 
 		#Display on the screen the name and rectangle around it
 		pred_name = names[int(out)]
